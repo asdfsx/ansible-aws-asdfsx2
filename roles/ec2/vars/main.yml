@@ -1,0 +1,48 @@
+# AWS region
+aws_region: "{{ lookup('env', 'AWS_REGION') }}"
+
+keypairs:
+  - key_name: "ansible_ldap_krb"
+    key_files: "~/.ssh/ansible_ldap_krb"
+
+subnet_id: "subnet-b12deed5"
+
+images:
+  centos7: ami-0c2aba6c
+
+ec2_instances:
+  - image: "{{ images.centos7 }}"
+    instance_type: t2.micro
+    group: default,ssh_enable,http_enable
+    instance_tags: 
+        Name: ansible_ldap
+    count_tag: 
+        Name: ansible_ldap
+    exact_count: 1
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
+    key_name: "ansible_ldap_krb"
+    ebs_optimized: no
+    termination_protection: false
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: standard
+        volume_size: 128
+
+  - image: "{{ images.centos7 }}"
+    instance_type: t2.micro
+    group: default,ssh_enable,http_enable
+    instance_tags: 
+        Name: ansible_kerberos
+    count_tag: 
+        Name: ansible_kerberos
+    exact_count: 1
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
+    key_name: "ansible_ldap_krb"
+    ebs_optimized: no
+    termination_protection: false
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: standard
+        volume_size: 128

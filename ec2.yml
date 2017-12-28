@@ -1,0 +1,23 @@
+---
+
+- name: Get SUBNET ID
+  hosts: localhost
+  connection: local
+  tags: ["keypair", "launch", "start", "stop", "terminate", "describe", "ssh"]
+  tasks:
+    - ec2_vpc_subnet_facts:
+        filters:
+          "tag:Name": "Public Subnet"
+      register: subnet_facts
+    - debug:
+        msg: "{{ subnet_facts.subnets.0.id }}"
+    - set_fact:
+        subnet_id: "{{ subnet_facts.subnets.0.id }}"
+    
+
+- name: Execute EC2 roles
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  roles:
+    - ec2

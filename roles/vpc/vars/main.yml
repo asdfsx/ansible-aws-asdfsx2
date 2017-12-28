@@ -1,0 +1,75 @@
+# VPC Information
+vpc_name:       "My VPC"
+vpc_cidr_block: "10.0.0.0/16"
+
+# Subnets
+subnets:
+  - name:  "Public Subnet"
+    cidr:  "10.0.0.0/24"
+    az  :  "a"
+
+# Security Groups
+security_group:
+  - name: ssh_enable
+    desc: the security group for the ssh
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+
+  - name: http_enable
+    desc: the security group for the http
+    rules:
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+
+  - name: kudu_enable
+    desc: the security group for the kudu
+    rules:
+      - proto: tcp
+        from_port: 8051
+        to_port: 8051
+        cidr_ip: 0.0.0.0/0
+
+      - proto: tcp
+        from_port: 8050
+        to_port: 8050
+        cidr_ip: 0.0.0.0/0
+      
+      - proto: tcp
+        from_port: 7051
+        to_port: 7051
+        cidr_ip: 0.0.0.0/0
+
+  - name: mysql
+    desc: the security group for the mysql
+    rules:
+      - proto: tcp
+        from_port: 3306
+        to_port: 3306
+        cidr_ip: 0.0.0.0/0
+
+  - name: postgres
+    desc: the security group for the postgres
+    rules:
+      - proto: tcp
+        from_port: 5432
+        to_port: 5432
+        cidr_ip: 0.0.0.0/0
+  
+  - name: kafka
+    desc: the security group for the kafka
+    rules:
+      - proto: tcp
+        from_port: 9092
+        to_port: 9092
+        cidr_ip: 0.0.0.0/0
+
+  # - name: default
+  #   desc: default security group
+  #   rules:
+  #     - proto: all
+  #       group_name: default

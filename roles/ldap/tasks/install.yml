@@ -1,0 +1,23 @@
+---
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install openldap krb5-client
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - pam_krb5
+    - krb5-workstation
+    - db4
+    - db4-utils
+    - db4-devel
+    - cyrus-sasl*
+    - openldap
+    - openldap-servers
+    - openldap-clients
+    - openldap-devel
+    - compat-openldap

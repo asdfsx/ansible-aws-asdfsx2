@@ -1,0 +1,4 @@
+master_db_pass: 123456
+kdc_conf: /var/kerberos/krb5kdc
+kadmin_user: admin
+kadmin_pass: 123456

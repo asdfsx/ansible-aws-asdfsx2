@@ -1,0 +1,13 @@
+---
+
+# roles/kerberos/tasks/main.yml
+- name: Fail play if the acname name is not defined
+  fail: 
+    msg: "Specify the acname name: -e 'acname=install'"
+  when: acname is undefined
+  tags: [install"]
+
+- name: Install kerberos
+  import_tasks: install.yml
+  when: acname == "install"
+  tags: ["install"]

@@ -1,0 +1,42 @@
+- name: add hosts
+  add_host:
+      name: "{{ instance_info.1.public_ip_address }}"
+      groups: "tag_Name_{{ instance_info.0.item.instance_tags.Name }}"
+
+- name: include vars
+  include_vars: "group_vars/tag_Name_{{ instance_info.0.item.instance_tags.Name }}.yml"
+
+- debug: 
+    msg: "{{ ansible_ssh_private_key_file }} {{ instance_info.1.public_ip_address }}"
+
+- name: close selinux
+  remote_user: centos
+  become: true
+  become_method: sudo
+  become_user: root
+  command: sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+  delegate_to: "{{ instance_info.1.public_ip_address }}"
+  
+- name: update limits
+  remote_user: centos
+  become: true
+  become_method: sudo
+  become_user: root
+  template:
+    src: "{{ item }}"
+    dest:  /etc/security/
+  with_items:
+    - limits.conf
+  delegate_to: "{{ instance_info.1.public_ip_address }}"
+
+- name: update sysctl
+  remote_user: centos
+  become: true
+  become_method: sudo
+  become_user: root
+  template:
+    src: "{{ item }}"
+    dest:  /etc/sysctl.conf
+  with_items:
+    - sysctl.conf
+  delegate_to: "{{ instance_info.1.public_ip_address }}"

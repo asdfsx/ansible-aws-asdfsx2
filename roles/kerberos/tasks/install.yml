@@ -1,0 +1,44 @@
+---
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install krb5-server
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - krb5-server
+
+- name: Config krb5-server
+  template:
+    src:  "{{ item }}"
+    dest: "/etc/krb5.conf"
+  with_items:
+    - krb5.conf
+
+- name: Config kdc
+  template:
+    src: "{{ item }}"
+    dest: "{{ kdc_conf }}"
+  with_items:
+    - kdc.conf
+    - kadm5.acl
+
+- name: Initialize kerberos database
+  shell: echo -e "{{ master_db_pass }}\n{{ master_db_pass }}" | kdb5_util create -s; touch /var/kerberos/db_created 
+  args:
+    creates: /var/kerberos/db_created
+
+- name: Create an admin for the administering the kerberos database
+  shell: echo -e "{{ kadmin_pass }}\n{{ kadmin_pass }}" | kadmin.local  -q "addprinc {{ kadmin_user }}/admin"; touch /var/kerberos/admin_created 
+  args:
+    creates: /var/kerberos/admin_created
+
+- name: Start the kerberos services 
+  service: name={{ item }} state=started enabled=yes
+  with_items: 
+    - krb5kdc
+    - kadmin
