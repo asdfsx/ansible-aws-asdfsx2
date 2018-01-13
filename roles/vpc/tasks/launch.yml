@@ -45,16 +45,28 @@
       Name:           "{{ item.name }}"
   with_items:
     "{{ subnets }}"
-  register: my_public_subnet
+  register: my_public_subnets
 
 - debug:
-    msg: "{{ my_public_subnet }}"
+    msg: "{{ my_public_subnets.results[0].subnet.id }}"
 
 # We save the id of the Public Subnet in a new variable.
+- name: Create Empty List for subnets
+  set_fact:
+    public_subnet_ids: []
+
+- name: Put subnet id Into The List
+  set_fact:
+    public_subnet_ids: "{{ public_subnet_ids }} + ['{{ item.subnet.id }}']" 
+  with_items:
+    - "{{ my_public_subnets.results }}"
+
+- debug:
+    msg: "{{ public_subnet_ids }}"
 
 # - name:               Set Public Subnet ID in variable
 #   set_fact:
-#     public_subnet_id: "{{ my_public_subnet.subnet.id }}"
+#     public_subnet_id: "{{ my_public_subnets.subnet.id }}"
 
 
 # Every VPC needs at least one Internet Gateway.
@@ -95,10 +107,12 @@
     tags:
       Name:           "Public"
     subnets:
-      - "{{ public_subnet_id }}"
+      - "{{ item }}"
     routes:
       - dest:         "0.0.0.0/0"
         gateway_id:   "{{ igw_id }}"
+  with_items:
+    "{{ public_subnet_ids }}"
 
 
 # Finally, we create Multi Security Group.
