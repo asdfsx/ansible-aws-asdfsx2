@@ -3,16 +3,16 @@
 - name: Creating host group ansible_kerberos from dynamic inventory
   hosts: localhost
   connection: local
-  tags: ['install']
+  tags: ['install', 'config']
   vars:
-    fin_tag_name: "{{ tag_name | default('ansible_kerberos', true) }}"
+    fin_tag_name: "{{ tag_name | default('ansible_ldap_kerberos', true) }}"
     kerberos_tag_name : "tag_Name_{{ fin_tag_name | replace('-', '_') }}"
   tasks:
-    - add_host: name={{ item }} groups=kerberos
+    - add_host: name={{ item }} groups=ansible_ldap_kerberos
       with_items: "{{ groups[kerberos_tag_name] }}"
 
 - name: Execute ldap roles
-  hosts: kerberos
+  hosts: ansible_ldap_kerberos
   user: centos
   become: true
   become_method: sudo

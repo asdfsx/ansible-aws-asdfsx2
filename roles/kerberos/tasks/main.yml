@@ -11,3 +11,8 @@
   import_tasks: install.yml
   when: acname == "install"
   tags: ["install"]
+
+- name: Install kerberos
+  import_tasks: config.yml
+  when: acname == "config"
+  tags: ["config"]

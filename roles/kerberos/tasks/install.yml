@@ -11,6 +11,9 @@
     state: present
   with_items:
     - krb5-server
+    - krb5-libs
+    - krb5-workstation
+    - pam_krb5
 
 - name: Config krb5-server
   template:

@@ -1,0 +1,25 @@
+--- 
+
+- debug:
+    msg: "{{ hostvars[inventory_hostname].ec2_private_ip_address }}"
+
+- name: Config krb5-server
+  template:
+    src:  "{{ item }}"
+    dest: "/etc/krb5.conf"
+  with_items:
+    - krb5.conf
+
+- name: Config kdc
+  template:
+    src: "{{ item }}"
+    dest: "{{ kdc_conf }}"
+  with_items:
+    - kdc.conf
+    - kadm5.acl
+
+- name: Start the kerberos services 
+  service: name={{ item }} state=restarted enabled=yes
+  with_items: 
+    - krb5kdc
+    - kadmin
